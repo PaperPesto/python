@@ -4,12 +4,6 @@ import cgi
 fs = cgi.FieldStorage()
 
 print("Content-Type: text/plain;charset=utf-8")
-#!/usr/bin/python
-import cgi
-
-fs = cgi.FieldStorage()
-
-print("Content-Type: text/plain;charset=utf-8")
 print()
 
 print("Here read-queryparam.py!")
