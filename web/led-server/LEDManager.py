@@ -1,18 +1,18 @@
-#from gpiozero import LED
+from gpiozero import LED
 from time import sleep
+
+led=LED(26)
 
 
 def on(ledpin):
-    from gpiozero import LED
     print("method on on led", ledpin)
-    led = LED(ledpin)
+    #led = LED(ledpin)
     print(led)
     led.on()
 
 def off(ledpin):
-    from gpiozero import LED
     print("method off on led", ledpin)
-    led = LED(ledpin)
+    #led = LED(ledpin)
     print(led)
     led.off()
 
