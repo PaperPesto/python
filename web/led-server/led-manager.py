@@ -3,12 +3,17 @@ from time import sleep
 
 
 def on(ledpin):
+    print("method on")
     led = LED(ledpin)
+    print(led)
     led.on()
 
 def off(ledpin):
+    print("method off")
     led = LED(ledpin)
+    print(led)
     led.off()
+
 
 if __name__ == "__main__":
     import sys
@@ -20,7 +25,7 @@ if __name__ == "__main__":
             print("Usage: $ python led-manager.py <arg1> <arg2>")
         else:
             ledpin = int(sys.argv[1])
-            print("led ", str(ledpin))
+            print("led:", str(ledpin))
             action = sys.argv[2]
             print("action:", action)
             if action == 'on':
