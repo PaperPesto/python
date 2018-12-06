@@ -20,10 +20,12 @@ if __name__ == "__main__":
             print("Usage: $ python led-manager.py <arg1> <arg2>")
         else:
             ledpin = int(sys.argv[1])
-            print("led: ", str(ledpin))
+            print("led ", str(ledpin))
             action = sys.argv[2]
-            print("action: ", action)
+            print("action:", action)
             if action == 'on':
+                print("Executing action on...")
                 on(ledpin)
             elif action == 'off':
+                print("Executing action off...")
                 off(ledpin)
