@@ -17,10 +17,12 @@ if __name__ == "__main__":
         print("Dice Manager module, type help as argument")
     elif len(sys.argv) > 1:
         if sys.argv[1] == 'help':
-            print("Usage: $ python diceManager.py <arg1> <arg2>")
+            print("Usage: $ python led-manager.py <arg1> <arg2>")
         else:
-            ledpin = sys.argv[1]
+            ledpin = int(sys.argv[1])
+            print("led: ", str(ledpin))
             action = sys.argv[2]
+            print("action: ", action)
             if action == 'on':
                 on(ledpin)
             elif action == 'off':
