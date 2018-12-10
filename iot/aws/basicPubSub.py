@@ -20,6 +20,7 @@ import logging
 import time
 import argparse
 import json
+import datetime
 
 AllowedActions = ['both', 'publish', 'subscribe']
 
@@ -114,8 +115,14 @@ loopCount = 0
 while True:
     if args.mode == 'both' or args.mode == 'publish':
         message = {}
-        message['message'] = args.message
-        message['sequence'] = loopCount
+        #message['message'] = args.message
+        #message['sequence'] = loopCount
+        # Modifiche temporanee
+        message['temperature'] = 12.5
+        message['humidity'] = "39.9%"
+        message['tenant'] = 1
+        message["sensorId"] = "0F:A0:29:6A:EE:E3"
+        message['time'] = str(datetime.datetime.now())
         messageJson = json.dumps(message)
         myAWSIoTMQTTClient.publish(topic, messageJson, 1)
         if args.mode == 'publish':
