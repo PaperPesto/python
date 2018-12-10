@@ -123,6 +123,7 @@ while True:
         message['tenant'] = 1
         message["sensorId"] = "0F:A0:29:6A:EE:E3"
         message['time'] = str(datetime.datetime.now())
+        message['loopCount'] = loopCount
         messageJson = json.dumps(message)
         myAWSIoTMQTTClient.publish(topic, messageJson, 1)
         if args.mode == 'publish':
