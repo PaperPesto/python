@@ -8,7 +8,7 @@ from time import sleep
 
 def on(ledpin, delay):
     action = "on"
-    print("Turning {0} led {1} for {2} seconds...", action, ledpin, delay)
+    print("Turning {action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
     led.on()
     sleep(delay)
@@ -16,7 +16,7 @@ def on(ledpin, delay):
 
 def off(ledpin, delay):
     action = "off"
-    print("Turning {0} led {1} for {2} seconds...", action, ledpin, delay)
+    print("Turning {action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
     led.off()
     sleep(delay)
