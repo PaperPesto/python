@@ -29,7 +29,7 @@ if __name__ == "__main__":
         print("LEDManager module, type help as argument")
     elif len(sys.argv) > 1:
         if sys.argv[1] == 'help':
-            print("Usage: $ python led-manager.py <arg1> <arg2> <arg3>")
+            print("Usage: $ python LEDManager.py <arg1> <arg2> <arg3>")
             print("<arg1>: led")
             print("<arg2>: action")
             print("<arg3>: delay")
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             print("led:", str(ledpin))
             action = sys.argv[2]
             print("action:", action)
-            delay = sys.argv[3]
+            delay = int(sys.argv[3])
             print("delay:", delay)
 
             if action == 'on':
