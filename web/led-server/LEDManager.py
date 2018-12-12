@@ -9,17 +9,17 @@ from time import sleep
 def on(ledpin, delay):
     '''Accende il led'''
     action = "on"
-    print("Turning {action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
+    print("{action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
     led.on()
     sleep(delay)
 
-def off(ledpin, delay):
-    '''Spenge il led'''
-    action = "off"
-    print("Turning {action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
+def blink(ledpin, delay):
+    '''Accende ad intermittenza il led'''
+    action = "blink"
+    print("{action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
-    led.off()
+    led.blink()
     sleep(delay)
 
 
@@ -45,5 +45,5 @@ if __name__ == "__main__":
 
             if action == 'on':
                 on(ledpin, delay)
-            elif action == 'off':
-                off(ledpin, delay)
+            elif action == 'blink':
+                blink(ledpin, delay)
