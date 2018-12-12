@@ -14,6 +14,7 @@ def on(ledpin, delay):
     led = LED(ledpin)
     led.on()
     sleep(delay)
+    led.close()
 
 def blink(ledpin, delay):
     '''Accende ad intermittenza il led'''
@@ -22,6 +23,7 @@ def blink(ledpin, delay):
     led = LED(ledpin)
     led.blink()
     sleep(delay)
+    led.close()
 
 def fade(ledpin, delay):
     '''Accende il led con fade in/out'''
@@ -30,6 +32,7 @@ def fade(ledpin, delay):
     led = PWMLED(ledpin)
     led.pulse()
     sleep(delay)
+    led.close()
 
 
 if __name__ == "__main__":
