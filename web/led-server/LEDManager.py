@@ -2,13 +2,14 @@
 # Ad esempio lo accendo, ritorno il controllo al controller e aspetto un altro handler, lo spengo, ecc
 # posso solo accenderlo per tot secondi, spengerlo e poi ritornare al controller
 
-from gpiozero import LED
+from gpiozero import LED, PWMLED
 from time import sleep
 
+actions = ['on', 'blink', 'pulse']
 
 def on(ledpin, delay):
     '''Accende il led'''
-    action = "on"
+    action = actions[0]
     print("{action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
     led.on()
@@ -16,10 +17,18 @@ def on(ledpin, delay):
 
 def blink(ledpin, delay):
     '''Accende ad intermittenza il led'''
-    action = "blink"
+    action = actions[1]
     print("{action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
     led = LED(ledpin)
     led.blink()
+    sleep(delay)
+
+def fade(ledpin, delay):
+    '''Accende il led con fade in/out'''
+    action = actions[2]
+    print("{action} led {pin} for {delay} seconds...".format(action=action, pin=ledpin, delay=delay))
+    led = PWMLED(ledpin)
+    led.pulse()
     sleep(delay)
 
 
@@ -43,7 +52,9 @@ if __name__ == "__main__":
             delay = int(sys.argv[3])
             print("delay:", delay)
 
-            if action == 'on':
+            if action == actions[0]:
                 on(ledpin, delay)
-            elif action == 'blink':
+            elif action == actions[1]:
                 blink(ledpin, delay)
+            elif action == actions[2]:
+                fade(ledpin, delay)
