@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import cgi
+import LEDManager
 
 fs = cgi.FieldStorage()
 
@@ -24,3 +25,4 @@ print("Value[Key[2]]: " + str(fs[fs.keys()[1]].value))
 print("Value[Key[1]]: " + str(fs[fs.keys()[2]].value))
 
 print("------")
+
