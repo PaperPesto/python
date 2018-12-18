@@ -1,7 +1,8 @@
-# Test inserimento su mongodb
+# Test inserimento temperatura ed umidità su mongodb
 # ::: v1.0
 
 from pymongo import MongoClient
+import Adafruit_DHT
 
 client = MongoClient('localhost', 27017)
 
@@ -10,6 +11,11 @@ db = client.test_database
 
 # Mi faccio dare una collection
 collection = db.test_collection
+
+while True:
+    humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+
+    print(temperature)
 
 # Creo un documento in JSON da inserire nella collection
 document = {
