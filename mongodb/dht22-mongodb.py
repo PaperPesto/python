@@ -1,6 +1,12 @@
 # Test inserimento temperatura ed umidità su mongodb
 # ::: v1.0
 
+# --- Utilizzo mongoshell
+# $ show dbs
+# $ use <dbname>
+# $ db.<collectionname>.find()
+# --------------------------- 
+
 from pymongo import MongoClient
 import Adafruit_DHT as dht
 import datetime
