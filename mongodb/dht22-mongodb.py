@@ -2,7 +2,7 @@
 # ::: v1.0
 
 from pymongo import MongoClient
-import Adafruit_DHT
+import Adafruit_DHT as dht
 
 client = MongoClient('localhost', 27017)
 
@@ -13,7 +13,7 @@ db = client.test_database
 collection = db.test_collection
 
 while True:
-    humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+    humidity,temperature = dht.read_retry(dht.DHT22, 21)
 
     print(temperature)
 
