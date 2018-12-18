@@ -7,11 +7,9 @@ import datetime
 
 client = MongoClient('localhost', 27017)
 
-# Mi faccio dare il database
-db = client.test_database
+db = client.science
 
-# Mi faccio dare una collection
-collection = db.test_collection
+collection = db.meteo
 
 while True:
     humidity,temperature = dht.read_retry(dht.DHT22, 21)
