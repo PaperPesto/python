@@ -1,6 +1,9 @@
 #!/usr/bin/python
 import cgi
+import cgitb
 import LEDManager
+
+cgitb.enable()  # Per debuggare eccezioni a video
 
 fs = cgi.FieldStorage()
 
@@ -10,7 +13,6 @@ print()
 print("--- Led Controller ---")
 
 print()
-print("------")
 
 print("Keys: " + str(fs.keys()))
 print()
@@ -20,17 +22,17 @@ print("Key[1]: " + str(fs.keys()[1]))
 print("Key[2]: " + str(fs.keys()[2]))
 print()
 
-print("Value[Key[0]]: " + str(fs[fs.keys()[0]].value))
-print("Value[Key[1]]: " + str(fs[fs.keys()[1]].value))
-print("Value[Key[2]]: " + str(fs[fs.keys()[2]].value))
+action = str(fs["action"].value)
+pin = int(fs["pin"].value)
+delay = int(fs["delay"].value)
 
-action = str(fs.keys()[0])
-delay = int(fs.keys()[1])
-pin = int(fs.keys()[2])
+print("---------")
 
 print("action:" + action)
-print("delay:" + delay)
-print("pin:" + pin)
+print("delay:" + str(delay))
+print("pin:" + str(pin))
+
+print("---------")
 
 if action == 'on':
     print("on action...")
@@ -44,4 +46,3 @@ elif action == "fade":
 
 
 print("---------------")
-
