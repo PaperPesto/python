@@ -21,8 +21,27 @@ print("Key[2]: " + str(fs.keys()[2]))
 print()
 
 print("Value[Key[0]]: " + str(fs[fs.keys()[0]].value))
-print("Value[Key[2]]: " + str(fs[fs.keys()[1]].value))
-print("Value[Key[1]]: " + str(fs[fs.keys()[2]].value))
+print("Value[Key[1]]: " + str(fs[fs.keys()[1]].value))
+print("Value[Key[2]]: " + str(fs[fs.keys()[2]].value))
 
-print("------")
+action = str(fs.keys()[0])
+delay = int(fs.keys()[1])
+pin = int(fs.keys()[2])
+
+print("action:" + action)
+print("delay:" + delay)
+print("pin:" + pin)
+
+if action == 'on':
+    print("on action...")
+    LEDManager.on(pin, delay)
+elif action == 'blink':
+    print("blink action...")
+    LEDManager.blink(pin, delay)
+elif action == "fade":
+    print("fade action...")
+    LEDManager.fade(pin, delay)
+
+
+print("---------------")
 
