@@ -3,7 +3,7 @@ import time
 
 mqttc = mqtt.Client()
 
-mqttc.connect("verdi79.ddns.net")
+mqttc.connect("***")
 mqttc.loop_start()
 i = 0
 

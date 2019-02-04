@@ -5,7 +5,7 @@ import datetime
 import time
 import logging
 
-broker_url = "192.168.1.28"
+broker_url = "***"
 
 client = mqtt.Client()
 

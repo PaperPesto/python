@@ -12,7 +12,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 
 
-client.connect("verdi79.ddns.net", 1883, 60)
+client.connect("***", 1883, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.

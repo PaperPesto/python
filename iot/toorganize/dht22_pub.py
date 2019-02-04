@@ -4,7 +4,7 @@ import time
 
 client = mqtt.Client()
 
-client.connect("192.168.1.28")
+client.connect("***")
 client.loop_start()
 
 while True:
