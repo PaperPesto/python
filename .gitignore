@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+jwt/id_rsa
+jwt/id_rsa.pub
