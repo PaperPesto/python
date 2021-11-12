@@ -1,14 +1,28 @@
 import random
 import matplotlib.pyplot as plt
 
-map = [0] * 20
-pos = random.randint(0,19)
-map[pos] = 1
+def gen():
+    map = [0] * 20
+    pos = random.randint(0,19)
+    map[pos] = 1
+    return map
 
-plt.plot(map, 'ro')
+axislimits = [0,20,0,3]
 
-# giving a title to my graph
-plt.title('Random uniform')
+map2 = [0] * 20
+pos2 = random.randint(0,19)
+map2[pos2] = 1
 
-# function to show the plot
+fig, axs = plt.subplots(4, figsize=(4,8))
+
+fig.suptitle('Uniformly random generated')
+axs[0].axis(axislimits)
+axs[1].axis(axislimits)
+axs[2].axis(axislimits)
+axs[3].axis(axislimits)
+axs[0].plot(gen(), 'bs')
+axs[1].plot(gen(), 'rs')
+axs[2].plot(gen(), 'gs')
+axs[3].plot(gen(), 'ys')
+
 plt.show()
