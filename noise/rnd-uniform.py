@@ -15,7 +15,7 @@ map2[pos2] = 1
 
 fig, axs = plt.subplots(4, figsize=(4,8))
 
-fig.suptitle('Uniformly random generated')
+fig.suptitle('Uniformly randafom generated')
 axs[0].axis(axislimits)
 axs[1].axis(axislimits)
 axs[2].axis(axislimits)
