@@ -10,6 +10,8 @@ fig, axs = plt.subplots(4)
 # 2 - hills
 # 3 - mountains
 
+# distribuzione uniforme (flat, rumore bianco)
+# è una distribuzione uniforme perché non viene privilegiato un tipo di variazione (lunga o breve) ma tutti i dati sono casuali
 def flat_rnd():
     return [random.randint(1, 3) for i in range(20)]
 
@@ -29,32 +31,32 @@ def lowpass_filter(dist):
     return output 
 
 
-flat_dist = flat_rnd()
+noise_flat = flat_rnd()
 # valleys_dist = valleys_rnd()
-noised_dist_0 = lowpass_filter(flat_dist)
-noised_dist_1 = lowpass_filter(noised_dist_0)
-noised_dist_2 = lowpass_filter(noised_dist_1)
+noise_flattened_0 = lowpass_filter(noise_flat)
+noise_flattened_1 = lowpass_filter(noise_flattened_0)
+noise_flattened_2 = lowpass_filter(noise_flattened_1)
 
 #flatdist
-axs[0].bar(range(len(flat_dist)), flat_dist, align='edge', width=width)
+axs[0].bar(range(len(noise_flat)), noise_flat, align='edge', width=width)
 axs[0].set_title('flat dist')
 axs[0].axis(axislimits)
 axs[0].xaxis.set_visible(False)
 
 #noised_dist_0 dist
-axs[1].bar(range(len(noised_dist_0)), noised_dist_0, align='edge', width=width)
+axs[1].bar(range(len(noise_flattened_0)), noise_flattened_0, align='edge', width=width)
 axs[1].set_title('noised_dist_0')
 axs[1].axis(axislimits)
 axs[1].xaxis.set_visible(False)
 
 #noised_dist_1
-axs[2].bar(range(len(noised_dist_1)), noised_dist_1, align='edge', width=width)
+axs[2].bar(range(len(noise_flattened_1)), noise_flattened_1, align='edge', width=width)
 axs[2].set_title('noised_dist_1')
 axs[2].axis(axislimits)
 axs[2].xaxis.set_visible(False)
 
 #noised_dist_2
-axs[3].bar(range(len(noised_dist_2)), noised_dist_2, align='edge', width=width)
+axs[3].bar(range(len(noise_flattened_2)), noise_flattened_2, align='edge', width=width)
 axs[3].set_title('noised_dist_2')
 axs[3].axis(axislimits)
 axs[3].xaxis.set_visible(False)
