@@ -24,12 +24,9 @@ fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(16, 5))
 
 A = np.fft.fft2(a)
 
-
 axs[0].pcolormesh(a)
 axs[1].pcolormesh(A.real)
 axs[2].pcolormesh(A.imag)
 
-# plt.imshow(A.real)
-# plt.colorbar()
 plt.show()
 
