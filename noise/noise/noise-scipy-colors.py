@@ -4,6 +4,8 @@
 import noise
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
+from matplotlib import cm
 
 # Colori RGB
 blue = [65,105,225]
@@ -12,7 +14,7 @@ beach = [238, 214, 175]
 
 # Parametri Perlin Noise
 shape = (256,256)
-scale = 100.0
+scale = 300.0
 octaves = 6
 persistence = 0.5
 lacunarity = 2.0
@@ -51,3 +53,16 @@ color_world = add_color(world)
 # Salvataggio in pgn. Attenzione all'ordine delle shape (vedi doc in alto)
 img = Image.fromarray(color_world, 'RGB')
 img.save('world.png')
+
+# Mostra il grafico in 3D
+# X=np.arange(shape[0])
+# Y=np.arange(shape[1])
+# X, Y = np.meshgrid(X, Y)
+# pic = np.array(world)
+
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# surf = ax.plot_surface(X, Y, pic, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+# fig.colorbar(surf, shrink=0.5, aspect=5)
+# plt.title('z as 3d height map')
+# plt.show()
