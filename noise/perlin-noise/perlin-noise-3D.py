@@ -15,7 +15,7 @@ Y=np.arange(ypix)
 X, Y = np.meshgrid(X, Y)
 pic = np.array(pic)
 
-# show hight map in 3d
+# show height map in 3d
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 surf = ax.plot_surface(X, Y, pic, cmap=cm.coolwarm, linewidth=0, antialiased=False)
