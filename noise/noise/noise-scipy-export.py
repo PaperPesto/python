@@ -1,8 +1,9 @@
 import noise
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
-shape = (2048,2048)
+shape = (32,32)
 scale = 100.0
 octaves = 6
 persistence = 0.5
@@ -20,8 +21,14 @@ for i in range(shape[0]):
                                     repeaty=1024, 
                                     base=0)
 
-# world = np.array(world)
+content = ""
 
-plt.imshow(world, cmap='gray')
-plt.colorbar()
-plt.show()
+for i in range(shape[0]):
+    for j in range(shape[1]):
+        content = content + str(math.floor(world[i][j] * 256)) + ","
+    
+    content += "\n"
+
+f = open("tilemap.txt", "w")
+f.write(content)
+f.close()
