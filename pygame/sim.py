@@ -331,7 +331,9 @@ SNOW = (206, 240, 242)
 
 DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 DISPLAYSURF.fill(WHITE)
-pygame.display.set_caption("Game")
+pygame.display.set_caption("sim")
+font = pygame.font.SysFont(None, 30)
+
 
 
 class Map(pygame.sprite.Sprite):
@@ -341,6 +343,8 @@ class Map(pygame.sprite.Sprite):
         self.tilemap_x = TILES_X
         self.tilemap_y = TILES_Y
         self.tilesize = TILESIZE
+        self.focus_width = 4
+        self.focus_height = 4
 
     def __scaleTilemap(self, tilemap):
         # la tilemap in ingresso non sempre è compresa tra -255 e 255, quindi la riscalo
@@ -355,9 +359,9 @@ class Map(pygame.sprite.Sprite):
 
         for i in range(len(tilemap)):
             if(tilemap[i] > 0):
-                tilemap[i] *= x_rate
+                tilemap[i] = int(tilemap[i] * x_rate)
             else:
-                tilemap[i] *= y_rate
+                tilemap[i] = int(tilemap[i] * y_rate)
 
         max = np.amax(tilemap)
         min = np.amin(tilemap)
@@ -369,20 +373,54 @@ class Map(pygame.sprite.Sprite):
 
     def update(self):
         pressed_keys = pygame.key.get_pressed()
+        self.focus = pygame.mouse.get_pos()
 
     def draw(self, surface):
         for i in range(len(self.tilemap)):
             if i > 31:
                 fermaui = True
             
-            posx = (i % self.tilemap_x) * self.tilesize
-            posy = int(i / self.tilemap_y) * self.tilesize
+            # posx = (i % self.tilemap_x) * self.tilesize
+            # posy = int(i / self.tilemap_y) * self.tilesize
+
+            # converte da array a coordinate (tilemap è un array)
+            coordinates = self.__arrayToMatrix(i)
+            posx = coordinates[0] * self.tilesize
+            posy = coordinates[1] * self.tilesize
 
             value = self.tilemap[i]
 
             color = self.__getHeightmapColor(value)
 
+            # per ogni elemento della tilemap disegna su schermo un pixel
             pygame.draw.rect(DISPLAYSURF, color, (posx, posy, self.tilesize, self.tilesize))
+        
+        # disegna un pixel nel punto di focus del mouse
+        pygame.draw.rect(DISPLAYSURF, RED, (self.focus[0], self.focus[1], self.focus_width, self.focus_height))
+
+        # parte che renderizza le coordinate e il valore in alto
+        # le coordinate che arrivato su self.focus sono in (x,y) ma io ragiono in (i,j). Inoltre gli assi cartesiani sono -x, -y rispetto ai canonici
+        mouse_coo = (int(self.focus[0]/self.tilesize), int(self.focus[1]/self.tilesize))
+        print(str(mouse_coo))
+        index = self.__matrixToArray(mouse_coo[1], mouse_coo[0])
+        value_focus = self.tilemap[index]
+        img = font.render(str(mouse_coo[0]) + ", " + str(mouse_coo[1]) + " = " + str(value_focus), True, BLACK)
+        surface.blit(img, (20, 20))
+
+    def __arrayToMatrix(self, i):
+        rows = self.tilemap_x
+        columns = self.tilemap_y
+
+        posx = (i % rows)
+        posy = int(i / columns)
+
+        return [posx, posy]
+
+    def __matrixToArray(self, i, j):
+        rows = self.tilemap_x
+        columns = self.tilemap_y
+
+        return i*columns + j
         
     def __getHeightmapColor(self, value):
         # Restituisce un colore in base al valore della heightmap (255)
@@ -418,6 +456,7 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+
     M.update()
 
     DISPLAYSURF.fill(WHITE)
