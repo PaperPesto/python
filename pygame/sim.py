@@ -313,8 +313,9 @@ SCREEN_WIDTH = TILES_X * TILESIZE
 SCREEN_HEIGHT = TILES_Y * TILESIZE
 HEIGHTMAP_MAX_VALUE = 255
 POINTER_SIZE = 4
+SIM_CYCLE_TIME = 2  # aggiusta la velocità della simulazione
 
-START_RIVER_POS = (60,209)
+START_RIVER_POS = (67,209)
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -362,61 +363,71 @@ class Map(pygame.sprite.Sprite):
         # simulo il fiume che si sposta (dovrebbe essere spostato in un metodo sim())
         print("time" + str(self.time))
         self.time += 1
-        if self.time % 10 == 0:
+
+        if self.time % SIM_CYCLE_TIME == 0:
             # ogni tot cicli faccio uno step di simulazione
+
+            rivers = []
+            newRivers = []
+
             for i in range(len(self.rivermap)):
-                # cerco il fiume
+                # cerco tutti i punti in cui c'è il fiume
                 if self.rivermap[i] == 1:
-                    # cerco quale direzione prenderà il fiume attorno a sé
                     pos = self.arrayToIndexes(i)
-                    startValue = self.tilemap[i]
+                    rivers.append(pos)
 
-                    # riempio una matrice di valori della heightmap intorno al punto in cui c'è il fiume
-                    values = np.zeros((3,3))
-                    values[0,0] = self.getTilemapValue((pos[0] - 1, pos[1] - 1))
-                    values[0,1] = self.getTilemapValue((pos[0] - 1, pos[1] + 0))
-                    values[0,2] = self.getTilemapValue((pos[0] - 1, pos[1] + 1))
-                    values[1,0] = self.getTilemapValue((pos[0] + 0, pos[1] - 1))
-                    values[1,1] = self.getTilemapValue((pos[0] + 0, pos[1] + 0))
-                    values[1,2] = self.getTilemapValue((pos[0] + 0, pos[1] + 1))
-                    values[2,0] = self.getTilemapValue((pos[0] + 1, pos[1] - 1))
-                    values[2,1] = self.getTilemapValue((pos[0] + 1, pos[1] + 0))
-                    values[2,2] = self.getTilemapValue((pos[0] + 1, pos[1] + 1))
-                    print(values)
+            for river in rivers:
+                indice = self.indexesToArray(river)
+                startValue = self.tilemap[indice]
 
-                    # faccio una matrice 9x9 con i gradienti
-                    grad = np.zeros((3,3))
-                    grad[0,0] = values[0,0] - startValue
-                    grad[0,1] = values[0,1] - startValue
-                    grad[0,2] = values[0,2] - startValue
-                    grad[1,0] = values[1,0] - startValue
-                    grad[1,1] = values[1,1] - startValue
-                    grad[1,2] = values[1,2] - startValue
-                    grad[2,0] = values[2,0] - startValue
-                    grad[2,1] = values[2,1] - startValue
-                    grad[2,1] = values[2,1] - startValue
-                    print(grad)
+                # riempio una matrice di valori della heightmap intorno al punto in cui c'è il fiume
+                values = np.zeros((3,3))
+                values[0,0] = self.getTilemapValue((pos[0] - 1, pos[1] - 1))
+                values[0,1] = self.getTilemapValue((pos[0] - 1, pos[1] + 0))
+                values[0,2] = self.getTilemapValue((pos[0] - 1, pos[1] + 1))
+                values[1,0] = self.getTilemapValue((pos[0] + 0, pos[1] - 1))
+                values[1,1] = self.getTilemapValue((pos[0] + 0, pos[1] + 0))
+                values[1,2] = self.getTilemapValue((pos[0] + 0, pos[1] + 1))
+                values[2,0] = self.getTilemapValue((pos[0] + 1, pos[1] - 1))
+                values[2,1] = self.getTilemapValue((pos[0] + 1, pos[1] + 0))
+                values[2,2] = self.getTilemapValue((pos[0] + 1, pos[1] + 1))
 
-                    # il fiume si sposta nella zona a gradiente (negativo) maggiore
-                    min = np.amin(grad)
-                    if grad[0,0] == min:
-                        self.setRiverValue((pos[0] - 1, pos[1] - 1), 1)
-                    if grad[0,1] == min:
-                        self.setRiverValue((pos[0] - 1, pos[1] + 0), 1)
-                    if grad[0,2] == min:
-                        self.setRiverValue((pos[0] - 1, pos[1] + 1), 1)
-                    if grad[1,0] == min:
-                        self.setRiverValue((pos[0] + 0, pos[1] - 1), 1)
-                    if grad[1,1] == min:
-                        self.setRiverValue((pos[0] + 0, pos[1] + 0), 1)
-                    if grad[1,2] == min:
-                        self.setRiverValue((pos[0] + 0, pos[1] + 1), 1)
-                    if grad[2,0] == min:
-                        self.setRiverValue((pos[0] + 1, pos[1] - 1), 1)
-                    if grad[2,1] == min:
-                        self.setRiverValue((pos[0] + 1, pos[1] + 0), 1)
-                    if grad[2,2] == min:
-                        self.setRiverValue((pos[0] + 1, pos[1] + 1), 1)
+                # faccio una matrice 9x9 con i gradienti
+                grad = np.zeros((3,3))
+                grad[0,0] = values[0,0] - startValue
+                grad[0,1] = values[0,1] - startValue
+                grad[0,2] = values[0,2] - startValue
+                grad[1,0] = values[1,0] - startValue
+                grad[1,1] = values[1,1] - startValue
+                grad[1,2] = values[1,2] - startValue
+                grad[2,0] = values[2,0] - startValue
+                grad[2,1] = values[2,1] - startValue
+                grad[2,1] = values[2,1] - startValue
+
+                # il fiume si sposta nella zona a gradiente (negativo) maggiore
+                min = np.amin(grad)
+                if grad[0,0] == min:
+                    newRivers.append((pos[0] - 1, pos[1] - 1))
+                if grad[0,1] == min:
+                    newRivers.append((pos[0] - 1, pos[1] + 0))
+                if grad[0,2] == min:
+                    newRivers.append((pos[0] - 1, pos[1] + 1))
+                if grad[1,0] == min:
+                    newRivers.append((pos[0] + 0, pos[1] - 1))
+                if grad[1,1] == min:
+                    newRivers.append((pos[0] + 0, pos[1] + 0))
+                if grad[1,2] == min:
+                    newRivers.append((pos[0] + 0, pos[1] + 1))
+                if grad[2,0] == min:
+                    newRivers.append((pos[0] + 1, pos[1] - 1))
+                if grad[2,1] == min:
+                    newRivers.append((pos[0] + 1, pos[1] + 0))
+                if grad[2,2] == min:
+                    newRivers.append((pos[0] + 1, pos[1] + 1))
+
+            for newRiver in newRivers:
+                self.setRiverValue(newRiver, 1)
+           
 
     def getTilemapValue(self, indexes):
         return self.tilemap[self.indexesToArray(indexes)]
