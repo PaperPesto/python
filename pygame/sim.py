@@ -316,8 +316,18 @@ HEIGHTMAP_MAX_VALUE = 255
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+GREEN_1 = (0, 158, 47)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+
+BEACH = (242, 215, 119)
+SEA = (75, 107, 250)
+GRASS = (87, 224, 74)
+FOREST = (43, 145, 33)
+MOUNTAIN = (166, 132, 949)
+ROCK = (122, 112, 100)
+ROCK_1 = (97, 88, 78)
+SNOW = (206, 240, 242)
 
 DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 DISPLAYSURF.fill(WHITE)
@@ -370,17 +380,35 @@ class Map(pygame.sprite.Sprite):
 
             value = self.tilemap[i]
 
-            color = WHITE
-
-            if(value < 0):
-                # color = BLACK
-                c = colorsys.hls_to_rgb(200/255, abs(value)/255, 0.6)   # HLS (HUE [0-360°], LUMINOSITY [%], SATURATION [%]) -> RGB (RED, GREEN, BLUE) | tutti i parametri rinormalizzati ad 1
-                color = [math.floor(c[0] * 255), math.floor(c[1] * 255), math.floor(c[2] * 255)]
-            else:
-                c = colorsys.hls_to_rgb(127/255, value/255, 0.5)   # HLS (HUE [0-360°], LUMINOSITY [%], SATURATION [%]) -> RGB (RED, GREEN, BLUE) | tutti i parametri rinormalizzati ad 1
-                color = [math.floor(c[0] * 255), math.floor(c[1] * 255), math.floor(c[2] * 255)]
+            color = self.__getHeightmapColor(value)
 
             pygame.draw.rect(DISPLAYSURF, color, (posx, posy, self.tilesize, self.tilesize))
+        
+    def __getHeightmapColor(self, value):
+        # Restituisce un colore in base al valore della heightmap (255)
+        # HLS (HUE [0-360°], LUMINOSITY [%], SATURATION [%]) -> RGB (RED, GREEN, BLUE) | tutti i parametri rinormalizzati ad 1
+        # --------------------------------------------------------------------------------------------------------------------
+
+        if value <= -10:
+            color = SEA
+        elif value > -10 and value <= 0:
+            color = BEACH
+        elif value > 0 and value <=40:
+            color = GRASS
+        elif value > 40 and value <=120:
+            color = FOREST
+        elif value > 120 and value <= 180:
+            color = ROCK
+        elif value > 180 and value <= 210:
+            color = ROCK_1
+        else:
+            color = SNOW
+        # else:
+        #     c = colorsys.hls_to_rgb(127/255, value/255, 0.5)
+        #     color = [math.floor(c[0] * 255), math.floor(c[1] * 255), math.floor(c[2] * 255)]
+
+        return color
+
 
 
 M = Map()
