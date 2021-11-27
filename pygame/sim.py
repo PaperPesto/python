@@ -312,6 +312,9 @@ TILES_Y = 256    # numero di tile sull'asse y
 SCREEN_WIDTH = TILES_X * TILESIZE
 SCREEN_HEIGHT = TILES_Y * TILESIZE
 HEIGHTMAP_MAX_VALUE = 255
+POINTER_SIZE = 4
+
+START_RIVER_POS = (60,209)
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -328,6 +331,7 @@ MOUNTAIN = (166, 132, 949)
 ROCK = (122, 112, 100)
 ROCK_1 = (97, 88, 78)
 SNOW = (206, 240, 242)
+RIVER = (52, 195, 235)
 
 DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 DISPLAYSURF.fill(WHITE)
@@ -343,8 +347,116 @@ class Map(pygame.sprite.Sprite):
         self.tilemap_x = TILES_X
         self.tilemap_y = TILES_Y
         self.tilesize = TILESIZE
-        self.focus_width = 4
-        self.focus_height = 4
+        self.focus_width = POINTER_SIZE
+        self.focus_height = POINTER_SIZE
+
+        self.time = 0
+
+        self.rivermap = np.zeros(TILES_X * TILES_Y)    # contiene le informazioni relative al fiume
+        self.rivermap[self.indexesToArray(START_RIVER_POS)] = 1    # inizializzazione fiume
+
+    def update(self):
+        pressed_keys = pygame.key.get_pressed()
+        self.focus = pygame.mouse.get_pos()
+
+        # simulo il fiume che si sposta (dovrebbe essere spostato in un metodo sim())
+        print("time" + str(self.time))
+        self.time += 1
+        if self.time % 10 == 0:
+            # ogni tot cicli faccio uno step di simulazione
+            for i in range(len(self.rivermap)):
+                # cerco il fiume
+                if self.rivermap[i] == 1:
+                    # cerco quale direzione prenderà il fiume attorno a sé
+                    pos = self.arrayToIndexes(i)
+                    startValue = self.tilemap[i]
+
+                    # riempio una matrice di valori della heightmap intorno al punto in cui c'è il fiume
+                    values = np.zeros((3,3))
+                    values[0,0] = self.getTilemapValue((pos[0] - 1, pos[1] - 1))
+                    values[0,1] = self.getTilemapValue((pos[0] - 1, pos[1] + 0))
+                    values[0,2] = self.getTilemapValue((pos[0] - 1, pos[1] + 1))
+                    values[1,0] = self.getTilemapValue((pos[0] + 0, pos[1] - 1))
+                    values[1,1] = self.getTilemapValue((pos[0] + 0, pos[1] + 0))
+                    values[1,2] = self.getTilemapValue((pos[0] + 0, pos[1] + 1))
+                    values[2,0] = self.getTilemapValue((pos[0] + 1, pos[1] - 1))
+                    values[2,1] = self.getTilemapValue((pos[0] + 1, pos[1] + 0))
+                    values[2,2] = self.getTilemapValue((pos[0] + 1, pos[1] + 1))
+                    print(values)
+
+                    # faccio una matrice 9x9 con i gradienti
+                    grad = np.zeros((3,3))
+                    grad[0,0] = values[0,0] - startValue
+                    grad[0,1] = values[0,1] - startValue
+                    grad[0,2] = values[0,2] - startValue
+                    grad[1,0] = values[1,0] - startValue
+                    grad[1,1] = values[1,1] - startValue
+                    grad[1,2] = values[1,2] - startValue
+                    grad[2,0] = values[2,0] - startValue
+                    grad[2,1] = values[2,1] - startValue
+                    grad[2,1] = values[2,1] - startValue
+                    print(grad)
+
+                    # il fiume si sposta nella zona a gradiente (negativo) maggiore
+                    min = np.amin(grad)
+                    if grad[0,0] == min:
+                        self.setRiverValue((pos[0] - 1, pos[1] - 1), 1)
+                    if grad[0,1] == min:
+                        self.setRiverValue((pos[0] - 1, pos[1] + 0), 1)
+                    if grad[0,2] == min:
+                        self.setRiverValue((pos[0] - 1, pos[1] + 1), 1)
+                    if grad[1,0] == min:
+                        self.setRiverValue((pos[0] + 0, pos[1] - 1), 1)
+                    if grad[1,1] == min:
+                        self.setRiverValue((pos[0] + 0, pos[1] + 0), 1)
+                    if grad[1,2] == min:
+                        self.setRiverValue((pos[0] + 0, pos[1] + 1), 1)
+                    if grad[2,0] == min:
+                        self.setRiverValue((pos[0] + 1, pos[1] - 1), 1)
+                    if grad[2,1] == min:
+                        self.setRiverValue((pos[0] + 1, pos[1] + 0), 1)
+                    if grad[2,2] == min:
+                        self.setRiverValue((pos[0] + 1, pos[1] + 1), 1)
+
+    def getTilemapValue(self, indexes):
+        return self.tilemap[self.indexesToArray(indexes)]
+
+    def getRiverValue(self, indexes):
+        return self.rivermap[self.indexesToArray(indexes)]
+
+    def setRiverValue(self, indexes, value):
+        self.rivermap[self.indexesToArray(indexes)] = value
+
+    def draw(self, surface):
+        for i in range(len(self.tilemap)):
+            indexes = self.arrayToIndexes(i)
+            coord_x = indexes[1] * self.tilesize
+            coord_y = indexes[0] * self.tilesize
+
+            value = self.tilemap[i]
+            color = self.__getHeightmapColor(value)
+
+            # per ogni elemento della tilemap disegna su schermo un pixel
+            pygame.draw.rect(DISPLAYSURF, color, (coord_x, coord_y, self.tilesize, self.tilesize))
+
+            # disegna il fiume
+            if self.rivermap[i] == 1:
+                pygame.draw.rect(DISPLAYSURF, RIVER, (coord_x, coord_y, self.focus_width, self.focus_height))
+
+        # disegna un pixel nel punto di focus del mouse
+        pygame.draw.rect(DISPLAYSURF, RED, (self.focus[0], self.focus[1], self.focus_width, self.focus_height))
+
+        # parte che renderizza le coordinate e il valore in alto
+        # le coordinate che arrivato su self.focus sono in (x,y) ma io ragiono in (i,j). Inoltre gli assi cartesiani sono -x, -y rispetto ai canonici
+        # mouse coordinates usa le coordinate rispetto a x,y
+        # mouse indexes usa le coordinate matriciale i,j
+        mouse_coo = (int(self.focus[0]/self.tilesize), int(self.focus[1]/self.tilesize))
+        mouse_indexes = (mouse_coo[1], mouse_coo[0])
+        # print(str(mouse_indexes))
+        index = self.indexesToArray(mouse_indexes)
+        value_focus = self.tilemap[index]
+        img = font.render(str(mouse_indexes[0]) + ", " + str(mouse_indexes[1]) + " = " + str(value_focus), True, BLACK)
+        surface.blit(img, (20, 20))
 
     def __scaleTilemap(self, tilemap):
         # la tilemap in ingresso non sempre è compresa tra -255 e 255, quindi la riscalo
@@ -371,69 +483,37 @@ class Map(pygame.sprite.Sprite):
 
         return tilemap
 
-    def update(self):
-        pressed_keys = pygame.key.get_pressed()
-        self.focus = pygame.mouse.get_pos()
-
-    def draw(self, surface):
-        for i in range(len(self.tilemap)):
-            if i > 31:
-                fermaui = True
-            
-            # posx = (i % self.tilemap_x) * self.tilesize
-            # posy = int(i / self.tilemap_y) * self.tilesize
-
-            # converte da array a coordinate (tilemap è un array)
-            coordinates = self.__arrayToMatrix(i)
-            posx = coordinates[0] * self.tilesize
-            posy = coordinates[1] * self.tilesize
-
-            value = self.tilemap[i]
-
-            color = self.__getHeightmapColor(value)
-
-            # per ogni elemento della tilemap disegna su schermo un pixel
-            pygame.draw.rect(DISPLAYSURF, color, (posx, posy, self.tilesize, self.tilesize))
-        
-        # disegna un pixel nel punto di focus del mouse
-        pygame.draw.rect(DISPLAYSURF, RED, (self.focus[0], self.focus[1], self.focus_width, self.focus_height))
-
-        # parte che renderizza le coordinate e il valore in alto
-        # le coordinate che arrivato su self.focus sono in (x,y) ma io ragiono in (i,j). Inoltre gli assi cartesiani sono -x, -y rispetto ai canonici
-        mouse_coo = (int(self.focus[0]/self.tilesize), int(self.focus[1]/self.tilesize))
-        print(str(mouse_coo))
-        index = self.__matrixToArray(mouse_coo[1], mouse_coo[0])
-        value_focus = self.tilemap[index]
-        img = font.render(str(mouse_coo[0]) + ", " + str(mouse_coo[1]) + " = " + str(value_focus), True, BLACK)
-        surface.blit(img, (20, 20))
-
-    def __arrayToMatrix(self, i):
+    def arrayToIndexes(self, index):
+        # converte da array a indici (tilemap è un array)
         rows = self.tilemap_x
         columns = self.tilemap_y
 
-        posx = (i % rows)
-        posy = int(i / columns)
+        i = int(index / columns)
+        j = (index % rows)
 
-        return [posx, posy]
+        return [i, j]
 
-    def __matrixToArray(self, i, j):
+    def indexesToArray(self, indexes):        
         rows = self.tilemap_x
         columns = self.tilemap_y
 
-        return i*columns + j
+        if indexes[1] > rows:
+            raise Exception('Errore, indice j supera le righe')
+
+        return indexes[0]*columns + indexes[1]
         
     def __getHeightmapColor(self, value):
         # Restituisce un colore in base al valore della heightmap (255)
         # HLS (HUE [0-360°], LUMINOSITY [%], SATURATION [%]) -> RGB (RED, GREEN, BLUE) | tutti i parametri rinormalizzati ad 1
         # --------------------------------------------------------------------------------------------------------------------
 
-        if value <= -10:
+        if value <= -5:
             color = SEA
-        elif value > -10 and value <= 0:
+        elif value > -5 and value <= 10:
             color = BEACH
-        elif value > 0 and value <=40:
+        elif value > 10 and value <=50:
             color = GRASS
-        elif value > 40 and value <=120:
+        elif value > 50 and value <=120:
             color = FOREST
         elif value > 120 and value <= 180:
             color = ROCK
