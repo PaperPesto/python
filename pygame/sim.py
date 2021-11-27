@@ -315,7 +315,7 @@ HEIGHTMAP_MAX_VALUE = 255
 POINTER_SIZE = 4
 SIM_CYCLE_TIME = 2  # aggiusta la velocità della simulazione
 
-START_RIVER_POS = (67,209)
+START_RIVER_POS = (57,191)
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -350,6 +350,7 @@ class Map(pygame.sprite.Sprite):
         self.tilesize = TILESIZE
         self.focus_width = POINTER_SIZE
         self.focus_height = POINTER_SIZE
+        self.pause = False
 
         self.time = 0
 
@@ -360,11 +361,16 @@ class Map(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
         self.focus = pygame.mouse.get_pos()
 
+        # if pressed_keys[K_LEFT]:
+            
+        if pressed_keys[pygame.K_SPACE]:
+            self.pause = not self.pause
+
         # simulo il fiume che si sposta (dovrebbe essere spostato in un metodo sim())
         print("time" + str(self.time))
         self.time += 1
 
-        if self.time % SIM_CYCLE_TIME == 0:
+        if not self.pause and self.time % SIM_CYCLE_TIME == 0:
             # ogni tot cicli faccio uno step di simulazione
 
             rivers = []
@@ -455,7 +461,9 @@ class Map(pygame.sprite.Sprite):
                 pygame.draw.rect(DISPLAYSURF, RIVER, (coord_x, coord_y, self.focus_width, self.focus_height))
 
         # disegna un pixel nel punto di focus del mouse
-        pygame.draw.rect(DISPLAYSURF, RED, (self.focus[0], self.focus[1], self.focus_width, self.focus_height))
+        valx = self.focus[0] - self.focus[0] % 4
+        valy = self.focus[1] - self.focus[1] % 4
+        pygame.draw.rect(DISPLAYSURF, RED, (valx, valy, self.focus_width, self.focus_height))
 
         # parte che renderizza le coordinate e il valore in alto
         # le coordinate che arrivato su self.focus sono in (x,y) ma io ragiono in (i,j). Inoltre gli assi cartesiani sono -x, -y rispetto ai canonici
