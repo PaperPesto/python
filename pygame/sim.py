@@ -380,7 +380,6 @@ class Map(pygame.sprite.Sprite):
         if pressed_keys[pygame.K_SPACE]:
             self.pause = not self.pause
 
-        # simulo il fiume che si sposta (dovrebbe essere spostato in un metodo sim())
         print("time" + str(self.time))
         self.time += 1
 
@@ -397,8 +396,10 @@ class Map(pygame.sprite.Sprite):
                     rivers.append(pos)
 
             for river in rivers:
-                indice = self.indexesToArray(river)
-                startValue = self.tilemap[indice]
+                startValue = self.getTilemapValue(river)
+
+                # simulazione di erosione idrica
+                # self.setTilemapValue(river, startValue - 1)
 
                 # riempio una matrice di valori della heightmap intorno al punto in cui c'è il fiume
                 values = np.zeros((3,3))
@@ -455,6 +456,9 @@ class Map(pygame.sprite.Sprite):
         except:
             # se esce dai bordi della tilemap lancia un eccezione e gli fornisco un muro impenetrabile
             return HEIGHTMAP_MAX_VALUE + 1 # valore massimo
+
+    def setTilemapValue(self, indexes, value):
+        self.tilemap[self.indexesToArray(indexes)] = value
 
     def getRiverValue(self, indexes):
         return self.rivermap[self.indexesToArray(indexes)]
