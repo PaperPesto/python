@@ -315,7 +315,6 @@ HEIGHTMAP_MAX_VALUE = 255
 POINTER_SIZE = 4
 SIM_CYCLE_TIME = 2  # aggiusta la velocità della simulazione
 
-START_RIVER_POS = (57,191)
 
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
@@ -328,11 +327,19 @@ BEACH = (242, 215, 119)
 SEA = (75, 107, 250)
 GRASS = (87, 224, 74)
 FOREST = (43, 145, 33)
+FOREST_1 = (40, 130, 31)
+FOREST_2 = (33, 99, 27)
 MOUNTAIN = (166, 132, 949)
 ROCK = (122, 112, 100)
 ROCK_1 = (97, 88, 78)
+ROCK_2 = (66, 61, 55)
+ROCK_3 = (43, 41, 37)
 SNOW = (206, 240, 242)
 RIVER = (52, 195, 235)
+
+START_RIVER_POS = [(60,191), (42,213), (32, 105)]
+# START_RIVER_POS = (73,182)
+# START_RIVER_POS = (58,194)
 
 DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 DISPLAYSURF.fill(WHITE)
@@ -355,7 +362,10 @@ class Map(pygame.sprite.Sprite):
         self.time = 0
 
         self.rivermap = np.zeros(TILES_X * TILES_Y)    # contiene le informazioni relative al fiume
-        self.rivermap[self.indexesToArray(START_RIVER_POS)] = 1    # inizializzazione fiume
+        # inizializzazione fiume
+        self.rivermap[self.indexesToArray(START_RIVER_POS[0])] = 1
+        self.rivermap[self.indexesToArray(START_RIVER_POS[1])] = 1
+        self.rivermap[self.indexesToArray(START_RIVER_POS[2])] = 1
 
     def update(self):
         pressed_keys = pygame.key.get_pressed()
@@ -388,15 +398,15 @@ class Map(pygame.sprite.Sprite):
 
                 # riempio una matrice di valori della heightmap intorno al punto in cui c'è il fiume
                 values = np.zeros((3,3))
-                values[0,0] = self.getTilemapValue((pos[0] - 1, pos[1] - 1))
-                values[0,1] = self.getTilemapValue((pos[0] - 1, pos[1] + 0))
-                values[0,2] = self.getTilemapValue((pos[0] - 1, pos[1] + 1))
-                values[1,0] = self.getTilemapValue((pos[0] + 0, pos[1] - 1))
-                values[1,1] = self.getTilemapValue((pos[0] + 0, pos[1] + 0))
-                values[1,2] = self.getTilemapValue((pos[0] + 0, pos[1] + 1))
-                values[2,0] = self.getTilemapValue((pos[0] + 1, pos[1] - 1))
-                values[2,1] = self.getTilemapValue((pos[0] + 1, pos[1] + 0))
-                values[2,2] = self.getTilemapValue((pos[0] + 1, pos[1] + 1))
+                values[0,0] = self.getTilemapValue((river[0] - 1, river[1] - 1))
+                values[0,1] = self.getTilemapValue((river[0] - 1, river[1] + 0))
+                values[0,2] = self.getTilemapValue((river[0] - 1, river[1] + 1))
+                values[1,0] = self.getTilemapValue((river[0] + 0, river[1] - 1))
+                values[1,1] = self.getTilemapValue((river[0] + 0, river[1] + 0))
+                values[1,2] = self.getTilemapValue((river[0] + 0, river[1] + 1))
+                values[2,0] = self.getTilemapValue((river[0] + 1, river[1] - 1))
+                values[2,1] = self.getTilemapValue((river[0] + 1, river[1] + 0))
+                values[2,2] = self.getTilemapValue((river[0] + 1, river[1] + 1))
 
                 # faccio una matrice 9x9 con i gradienti
                 grad = np.zeros((3,3))
@@ -408,35 +418,39 @@ class Map(pygame.sprite.Sprite):
                 grad[1,2] = values[1,2] - startValue
                 grad[2,0] = values[2,0] - startValue
                 grad[2,1] = values[2,1] - startValue
-                grad[2,1] = values[2,1] - startValue
+                grad[2,2] = values[2,2] - startValue
 
                 # il fiume si sposta nella zona a gradiente (negativo) maggiore
                 min = np.amin(grad)
                 if grad[0,0] == min:
-                    newRivers.append((pos[0] - 1, pos[1] - 1))
+                    newRivers.append((river[0] - 1, river[1] - 1))
                 if grad[0,1] == min:
-                    newRivers.append((pos[0] - 1, pos[1] + 0))
+                    newRivers.append((river[0] - 1, river[1] + 0))
                 if grad[0,2] == min:
-                    newRivers.append((pos[0] - 1, pos[1] + 1))
+                    newRivers.append((river[0] - 1, river[1] + 1))
                 if grad[1,0] == min:
-                    newRivers.append((pos[0] + 0, pos[1] - 1))
+                    newRivers.append((river[0] + 0, river[1] - 1))
                 if grad[1,1] == min:
-                    newRivers.append((pos[0] + 0, pos[1] + 0))
+                    newRivers.append((river[0] + 0, river[1] + 0))
                 if grad[1,2] == min:
-                    newRivers.append((pos[0] + 0, pos[1] + 1))
+                    newRivers.append((river[0] + 0, river[1] + 1))
                 if grad[2,0] == min:
-                    newRivers.append((pos[0] + 1, pos[1] - 1))
+                    newRivers.append((river[0] + 1, river[1] - 1))
                 if grad[2,1] == min:
-                    newRivers.append((pos[0] + 1, pos[1] + 0))
+                    newRivers.append((river[0] + 1, river[1] + 0))
                 if grad[2,2] == min:
-                    newRivers.append((pos[0] + 1, pos[1] + 1))
+                    newRivers.append((river[0] + 1, river[1] + 1))
 
             for newRiver in newRivers:
                 self.setRiverValue(newRiver, 1)
            
 
     def getTilemapValue(self, indexes):
-        return self.tilemap[self.indexesToArray(indexes)]
+        try:
+            return self.tilemap[self.indexesToArray(indexes)]
+        except:
+            # se esce dai bordi della tilemap lancia un eccezione e gli fornisco un muro impenetrabile
+            return HEIGHTMAP_MAX_VALUE + 1 # valore massimo
 
     def getRiverValue(self, indexes):
         return self.rivermap[self.indexesToArray(indexes)]
@@ -532,12 +546,20 @@ class Map(pygame.sprite.Sprite):
             color = BEACH
         elif value > 10 and value <=50:
             color = GRASS
-        elif value > 50 and value <=120:
+        elif value > 50 and value <=70:
             color = FOREST
-        elif value > 120 and value <= 180:
+        elif value > 70 and value <=100:
+            color = FOREST_1
+        elif value > 100 and value <=120:
+            color = FOREST_2
+        elif value > 120 and value <= 150:
             color = ROCK
-        elif value > 180 and value <= 210:
+        elif value > 150 and value <= 180:
             color = ROCK_1
+        elif value > 180 and value <= 195:
+            color = ROCK_2
+        elif value > 195 and value <= 210:
+            color = ROCK_3
         else:
             color = SNOW
         # else:
