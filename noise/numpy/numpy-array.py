@@ -25,7 +25,8 @@ array_example.ndim # numero di assi (dimensione): 3, ovvero una 3-pla (,,)
 array_example.size # numero di elementi totali: 3*2*4 = 24
 array_example.shape # tupla che comprende il numero di elementi per asse (3,2,4)
 
-# da capire questo discorso, in particolare il (6,) senza niente dopo la virgola
+# da capire questo discorso, in particolare il (6,) senza niente dopo la virgola:
+# è il modo di gestire i tensori di numpy. (6,) è uguale a (6,1) ma con un indice in meno su cui scorrere
 a1 = np.array([1, 2, 3, 4, 5, 6])
 b1 = np.expand_dims(a1, axis=1)
 #print(b1)

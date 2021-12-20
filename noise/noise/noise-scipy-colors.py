@@ -19,6 +19,8 @@ octaves = 6
 persistence = 0.5
 lacunarity = 2.0
 
+# i valori arrivano tra -1 e 1 (pare invece tra -0.5 e 0.5)
+
 # Prende un array (X,Y) e restituisce un array (X,Y,3) con le informazioni dei colori rgb
 def add_color(world):
     color_world = np.zeros(world.shape+(3,), dtype=np.uint8)    # usare uint8 per la 3-pla dei colori
